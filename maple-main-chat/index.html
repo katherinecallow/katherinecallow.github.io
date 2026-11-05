@@ -16,7 +16,7 @@ body{padding:16px;display:flex;justify-content:center}
 .hd{display:flex;flex-direction:column;flex:1;min-width:0}
 .hd b{font-family:var(--serif);font-weight:normal;font-size:22px;line-height:1.1}
 .hd span{font-size:12px;letter-spacing:.08em;opacity:.8;display:flex;align-items:center;gap:6px}
-.hd i{width:7px;height:7px;border-radius:50%;background:#7fbf7f;display:inline-block}
+.hd .x{display:inline}@media (max-width:480px){.hd .x{display:none}}.hd i{width:7px;height:7px;border-radius:50%;background:#7fbf7f;display:inline-block}
 .av{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:var(--maple);color:#fff;font-size:10px;font-weight:600;letter-spacing:.04em;display:flex;align-items:center;justify-content:center}
 .av.lg{width:40px;height:40px;font-size:12px;border:2px solid rgba(251,248,242,.35)}
 .live{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--cream);text-decoration:none;border:1px solid rgba(251,248,242,.45);border-radius:999px;padding:6px 12px;white-space:nowrap}
@@ -33,7 +33,7 @@ body{padding:16px;display:flex;justify-content:center}
 .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
 .cards.n4{grid-template-columns:repeat(2,minmax(0,1fr))}
 .card{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);background:var(--tint);border:1px solid var(--line);border-radius:10px;padding:10px 12px;transition:border-color .15s,transform .15s}
-.card:hover,.card:focus-visible{border-color:var(--maple);transform:translateY(-2px)}
+.hint{margin-top:8px!important;font-size:12px;color:var(--muted)}
 .cat{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .nm{font-family:var(--serif);font-size:15px;line-height:1.25;flex:1}
 .card .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;font-size:12px;color:var(--muted)}
@@ -73,13 +73,13 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--maple);outline-offs
 </head>
 <body>
 <div class="chat">
-  <div class="head"><span class="av lg">M&amp;M</span><div class="hd"><b>Ask the shop</b><span><i></i>Maple &amp; Main · usually answers instantly</span></div><a class="live" id="live" target="_blank" rel="noopener" title="Staff test: needs a claude.ai sign-in">Live AI test ↗</a></div>
+  <div class="head"><span class="av lg">M&amp;M</span><div class="hd"><b>Ask the shop</b><span><i></i>Maple &amp; Main<span class="x"> · usually answers instantly</span></span></div></div>
   <div id="log" aria-live="polite"></div>
   <div class="side">
     <p class="lbl">Popular questions</p>
     <div class="tabs" id="tabs" role="tablist"></div>
     <div class="chips" id="chips"></div>
-    <p class="foot">Didn't find it? Call (555) 010-2200 or <a id="shoplink" target="_blank" rel="noopener">search the shop</a>.</p>
+    <p class="foot">Didn't find it? Call (555) 010-2200 or use the search at the top of the page.</p>
   </div>
   <form id="f" autocomplete="off"><label for="q" hidden>Your question</label><input id="q" placeholder="Ask about a bottle, pairing or pickup…" maxlength="300"><button class="send" type="submit">Send</button></form>
 </div>
@@ -88,11 +88,11 @@ const D={"qa": [{"g": "Recommendations", "q": "Good bourbon under $35?", "a": "T
 const $=s=>document.querySelector(s), log=$('#log');
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const PR=Object.fromEntries(D.pr.map(p=>[p.id,p]));
-$('#live').href=D.ai; $('#shoplink').href=D.base+'/products';
-const card=p=>`<a class="card" href="${D.base}/product/${p.s}" target="_blank" rel="noopener"><span class="cat">${esc(p.c)}</span><span class="nm">${esc(p.n)}</span><span class="row"><b>$${p.p.toFixed(2)}</b><span>Shop →</span></span></a>`;
+
+const card=p=>`<div class="card"><span class="cat">${esc(p.c)}</span><span class="nm">${esc(p.n)}</span><span class="row"><b>$${p.p.toFixed(2)}</b><span>Order online</span></span></div>`;
 function botHTML(text,ids,link){
   const ps=ids.map(i=>PR[i]).filter(Boolean);
-  return `<p>${esc(text)}</p>${link?`<a class="more" href="${link[0]}" target="_blank" rel="noopener">${esc(link[1])} →</a>`:''}${ps.length?`<div class="cards${ps.length==4?' n4':''}">${ps.map(card).join('')}</div>`:''}`;
+  return `<p>${esc(text)}</p>${ps.length?`<div class="cards${ps.length==4?' n4':''}">${ps.map(card).join('')}</div><p class="hint">Search any of these with the search bar at the top of the page to add it to your cart.</p>`:''}`;
 }
 function addMe(t){const d=document.createElement('div');d.className='me';d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight}
 function addBot(html,delay){
@@ -140,7 +140,7 @@ function answer(raw){
     return {t:top.length==1?`Yes, we carry ${top[0].n} for $${top[0].p.toFixed(2)}, ready for in-store pickup.`:`Yes, here's what we have:`,ids:top.map(p=>p.id)};
   }
   if(best&&bs>=1) return {t:best.a,ids:best.ids,l:best.l};
-  return {t:"I'm not sure about that one. Try asking about a type of drink, a price (\"red under $15\"), a food pairing or pickup. For anything else, call us at (555) 010-2200.",ids:[],l:[D.base+'/products?search='+encodeURIComponent(raw.slice(0,60)),'Search the shop for it']};
+  return {t:"I'm not sure about that one. Try asking about a type of drink, a price (\"red under $15\"), a food pairing or pickup. For anything else, call us at (555) 010-2200.",ids:[]};
 }
 function ask(text){
   text=text.trim();if(!text)return;addMe(text);
