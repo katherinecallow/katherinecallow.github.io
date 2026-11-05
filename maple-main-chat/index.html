@@ -106,6 +106,7 @@ const norm=s=>' '+s.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9$&'. ]
 const has=(q,k)=>q.includes(' '+k+' ')||q.includes(' '+k+'s ')||(k.length>4&&q.includes(k));
 const TYPES=['red','white','rose','rosé','sparkling','wine','bourbon','whiskey','whisky','scotch','rye','vodka','tequila','gin','rum','spirits','liquor','beer','ipa','lager','stout','wheat','seltzer','sake','champagne','prosecco','cabernet','merlot','malbec','zinfandel','pinot noir','chardonnay','sauvignon blanc','pinot grigio','riesling','mixer','tonic','ice','corkscrew','light','craft'];
 function answer(raw){
+  const ex=D.qa.find(x=>x.q.toLowerCase()===raw.trim().toLowerCase());if(ex)return {t:ex.a,ids:ex.ids,l:ex.l};
   const q=norm(raw);
   if(/\b(i'?m|i am|im)\s*(1[0-9]|20)\b|\bunder 21\b|\bnot 21\b|\bminor\b/.test(q))
     return {t:"Sorry, you need to be 21 or older to buy from us. Thanks for understanding!",ids:[]};
