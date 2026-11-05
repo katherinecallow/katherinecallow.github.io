@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ask Maple &amp; Main</title>
+<style>
+:root{--cream:#fbf8f2;--paper:#fff;--ink:#2b1f19;--muted:#7a675b;--line:#e8dccd;--maple:#a8431f;--tint:#f6e7dc;
+--serif:Georgia,"Iowan Old Style","Times New Roman",serif;--sans:"Gill Sans","Gill Sans MT","Avenir Next",Avenir,"Segoe UI",sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45}
+body{padding:16px;display:flex;justify-content:center}
+.chat{width:100%;max-width:1100px;height:100%;background:var(--paper);border:1px solid var(--line);border-radius:18px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;box-shadow:0 10px 30px rgba(43,31,25,.08)}
+.head{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--ink);color:var(--cream)}
+.hd{display:flex;flex-direction:column;flex:1;min-width:0}
+.hd b{font-family:var(--serif);font-weight:normal;font-size:22px;line-height:1.1}
+.hd span{font-size:12px;letter-spacing:.08em;opacity:.8;display:flex;align-items:center;gap:6px}
+.hd i{width:7px;height:7px;border-radius:50%;background:#7fbf7f;display:inline-block}
+.av{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:var(--maple);color:#fff;font-size:10px;font-weight:600;letter-spacing:.04em;display:flex;align-items:center;justify-content:center}
+.av.lg{width:40px;height:40px;font-size:12px;border:2px solid rgba(251,248,242,.35)}
+.live{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--cream);text-decoration:none;border:1px solid rgba(251,248,242,.45);border-radius:999px;padding:6px 12px;white-space:nowrap}
+.live:hover,.live:focus-visible{background:var(--maple);border-color:var(--maple)}
+#log{grid-column:1;grid-row:2;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding:22px 24px;background:var(--cream);overscroll-behavior:contain}
+.bot{display:flex;gap:10px;align-items:flex-end;max-width:94%;animation:in .3s ease both}
+.me{align-self:flex-end;max-width:80%;background:var(--maple);color:#fff;padding:9px 15px;border-radius:16px 16px 4px 16px;overflow-wrap:anywhere;animation:in .2s ease both}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.bub{background:var(--paper);border:1px solid var(--line);padding:12px 16px;border-radius:16px 16px 16px 4px;min-width:0}
+.bub p{margin:0}
+.typing{display:inline-flex;gap:4px;padding:4px 0}.typing span{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:dot 1s infinite}.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,60%,100%{opacity:.25}30%{opacity:1}}
+.more{display:inline-block;margin-top:8px;color:var(--maple);font-weight:600;text-decoration:none}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.cards.n4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);background:var(--tint);border:1px solid var(--line);border-radius:10px;padding:10px 12px;transition:border-color .15s,transform .15s}
+.card:hover,.card:focus-visible{border-color:var(--maple);transform:translateY(-2px)}
+.cat{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.nm{font-family:var(--serif);font-size:15px;line-height:1.25;flex:1}
+.card .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;font-size:12px;color:var(--muted)}
+.card .row b{font-size:15px;color:var(--maple);font-variant-numeric:tabular-nums}
+.side{grid-column:2;grid-row:2/4;display:flex;flex-direction:column;gap:12px;padding:20px 22px;border-left:1px solid var(--line);min-height:0;overflow-y:auto}
+.lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{font:inherit;cursor:pointer;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:transparent}
+.tab[aria-selected=true]{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
+.chip{font:inherit;cursor:pointer;font-size:14px;padding:7px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--ink);transition:border-color .15s,color .15s}
+.chip:hover,.chip:focus-visible{border-color:var(--maple);color:var(--maple)}
+.foot{margin:auto 0 0;font-size:13px;color:var(--muted)}
+.foot a{color:var(--maple)}
+form{grid-column:1;grid-row:3;display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--paper)}
+#q{flex:1;min-width:0;font:inherit;color:var(--ink);background:var(--cream);border:1px solid var(--line);border-radius:999px;padding:10px 16px}
+#q:focus{outline:2px solid var(--maple);outline-offset:1px}
+.send{font:inherit;font-weight:600;background:var(--maple);color:#fff;border:0;border-radius:999px;padding:10px 18px;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:2px solid var(--maple);outline-offset:2px}
+@media (max-width:1000px){.chip{font-size:13px;padding:6px 11px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){
+ body{padding:8px}
+ .chat{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto auto}
+ .head{padding:10px 14px}.hd b{font-size:19px}.live{font-size:10px;padding:5px 9px}
+ #log{padding:14px;gap:10px}
+ .cards,.cards.n4{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px}
+ .card{flex:0 0 62%;scroll-snap-align:start}
+ .side{grid-column:1;grid-row:3;border-left:0;border-top:1px solid var(--line);padding:10px 14px;gap:8px;overflow:visible}
+ .side .lbl,.foot{display:none}
+ .chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+ .chip{white-space:nowrap}
+ .tab{font-size:11px;padding:5px 9px}
+ form{grid-row:4;padding:10px 12px}
+}
+@media (prefers-reduced-motion:reduce){.bot,.me{animation:none}.card{transition:none}}
+</style>
+</head>
+<body>
+<div class="chat">
+  <div class="head"><span class="av lg">M&amp;M</span><div class="hd"><b>Ask the shop</b><span><i></i>Maple &amp; Main · usually answers instantly</span></div><a class="live" id="live" target="_blank" rel="noopener" title="Staff test: needs a claude.ai sign-in">Live AI test ↗</a></div>
+  <div id="log" aria-live="polite"></div>
+  <div class="side">
+    <p class="lbl">Popular questions</p>
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <div class="chips" id="chips"></div>
+    <p class="foot">Didn't find it? Call (555) 010-2200 or <a id="shoplink" target="_blank" rel="noopener">search the shop</a>.</p>
+  </div>
+  <form id="f" autocomplete="off"><label for="q" hidden>Your question</label><input id="q" placeholder="Ask about a bottle, pairing or pickup…" maxlength="300"><button class="send" type="submit">Send</button></form>
+</div>
+<script>
+const D={"qa": [{"g": "Recommendations", "q": "Good bourbon under $35?", "a": "Three solid picks, from easy-drinking to a little richer. If you want to try before you commit, Copper Fox also comes in a 50ml for $2.49.", "ids": ["p35", "p37", "p12"], "kw": ["bourbon"], "l": null}, {"g": "Recommendations", "q": "A whiskey worth gifting?", "a": "For a special bottle, go with the Glen Tarra 12 year Scotch or the Old Mill Rye. Add a gift bag for $2.99 and it's ready to hand over.", "ids": ["p29", "p17", "p25"], "kw": ["gift whiskey", "whiskey gift", "whiskey for a gift", "special bottle", "nice whiskey", "fancy"], "l": null}, {"g": "Recommendations", "q": "Best red under $15?", "a": "Vista Alta Merlot is soft and easy with almost anything. Red Mesa Malbec is bolder and darker, great with burgers.", "ids": ["p36", "p7"], "kw": ["red", "merlot", "malbec", "cheap red"], "l": null}, {"g": "Recommendations", "q": "A crisp white wine?", "a": "Twin Oaks Sauvignon Blanc and Silver Coast Pinot Grigio are bright and dry. Lakeview Riesling is a touch sweeter and great with spicy food.", "ids": ["p9", "p13", "p15"], "kw": ["white", "sauvignon", "pinot grigio", "riesling", "crisp", "spicy", "thai", "curry", "indian", "chinese", "sushi", "chicken"], "l": null}, {"g": "Recommendations", "q": "Rosé recommendations?", "a": "Bluff Point is our everyday rosé at $9.99. Petal & Stone is a step up, dry and a little more delicate.", "ids": ["p10", "p1"], "kw": ["rose", "rosé", "pink"], "l": null}, {"g": "Recommendations", "q": "Which vodka should I get?", "a": "Silver Pine is a clean everyday vodka, and the 1.75L is the better value for parties. Stillwater 1L is on promo right now at $19.99.", "ids": ["p20", "p21", "p5"], "kw": ["vodka"], "l": null}, {"g": "Recommendations", "q": "Blanco or reposado tequila?", "a": "Blanco is unaged, bright and peppery, so it's best for margaritas. Reposado rests in oak, so it's smoother with a little vanilla and is nice to sip.", "ids": ["p39", "p6"], "kw": ["tequila", "blanco", "reposado", "agave"], "l": null}, {"g": "Recommendations", "q": "Local-style craft beer?", "a": "For hops, try Harbor Light IPA or Northshore IPA. Want something darker? Brick Mill Stout. Golden Field Wheat is light and easy.", "ids": ["p22", "p42", "p23"], "kw": ["beer", "ipa", "craft", "stout", "wheat", "hoppy"], "l": null}, {"g": "Recommendations", "q": "Something light and ready to drink?", "a": "Paloma Bay canned cocktails are bright and citrusy, Lime Coast seltzer is the lightest option, and the Copper Fox Bourbon Smash comes in a single can.", "ids": ["p46", "p40", "p47"], "kw": ["seltzer", "canned", "can", "ready to drink", "rtd", "light", "cocktail"], "l": null}, {"g": "Recommendations", "q": "Do you have sake?", "a": "Yes. Yuki Junmai is clean and dry, good chilled with food. Hana Nigori is cloudy, creamy and a little sweet.", "ids": ["p45", "p28"], "kw": ["sake"], "l": null}, {"g": "Pairings & occasions", "q": "Wine for a steak dinner?", "a": "Go big and red. Kendall Ridge Cabernet is the classic match, Red Mesa Malbec is great with anything off the grill, and Old Vine Zinfandel brings jammy fruit.", "ids": ["p3", "p7", "p16"], "kw": ["steak", "beef", "burger", "grill", "bbq"], "l": null}, {"g": "Pairings & occasions", "q": "Wine with salmon or seafood?", "a": "Cedar Lane Pinot Noir is light enough for salmon. For white fish or shellfish, try Marlow Bay Sauvignon Blanc or Granite Hill Chardonnay.", "ids": ["p33", "p11", "p8"], "kw": ["salmon", "fish", "seafood", "shrimp", "shellfish", "oyster"], "l": null}, {"g": "Pairings & occasions", "q": "What goes with Thanksgiving?", "a": "Pinot Noir and Riesling both go with almost everything on the table. Feeding a crowd? The Kendall Ridge Cabernet magnum (1.5L) is $32.99.", "ids": ["p33", "p15", "p14"], "kw": ["thanksgiving", "turkey", "holiday dinner"], "l": null}, {"g": "Pairings & occasions", "q": "Something sparkling to celebrate?", "a": "Bella Fiore Prosecco is fruity, fun and $15.99. For a real toast, Maison Clair Champagne is $49.99.", "ids": ["p2", "p4"], "kw": ["sparkling", "champagne", "prosecco", "celebrate", "bubbly", "toast", "new year", "birthday"], "l": null}, {"g": "Pairings & occasions", "q": "Build me a margarita kit", "a": "Start with Agave Sol Blanco tequila, add a few limes at 50¢ each and a bag of ice. Need orange liqueur too? Call us at (555) 010-2200 to check.", "ids": ["p39", "p32", "p31"], "kw": ["margarita", "margaritas", "tacos", "taco", "mexican"], "l": null}, {"g": "Pairings & occasions", "q": "Gin & tonic supplies?", "a": "North Harbor Gin, a liter of tonic and a couple of limes. That covers about eight drinks.", "ids": ["p38", "p30", "p32"], "kw": ["gin", "tonic", "g&t"], "l": null}, {"g": "Pairings & occasions", "q": "Feeding a party or game day?", "a": "The 30-packs are the best value: Harbor Light Lager or Ridgeline Light. Add a 12-pack of Lime Coast seltzer and a 10lb bag of ice.", "ids": ["p41", "p43", "p40"], "kw": ["party", "game day", "football", "crowd", "bbq party", "tailgate", "30 pack", "30pk"], "l": null}, {"g": "Pairings & occasions", "q": "Hostess gift under $25?", "a": "A bottle of Cedar Lane Pinot Noir or Bella Fiore Prosecco plus a wine gift bag looks great and stays under $25.", "ids": ["p33", "p2", "p25"], "kw": ["gift", "hostess", "present", "housewarming", "bring to dinner"], "l": null}, {"g": "Pairings & occasions", "q": "Pizza night pick?", "a": "Old Vine Zinfandel or Vista Alta Merlot with red sauce. If it's a beer night, Northshore IPA.", "ids": ["p16", "p36", "p42"], "kw": ["pizza", "pasta", "italian"], "l": null}, {"g": "Pickup & info", "q": "How does pickup work?", "a": "Order online and pick up in the store for free at 100 Main Street. We'll have it bagged and waiting at the counter. Bring a valid ID; you must be 21+.", "ids": [], "kw": ["pickup", "pick up", "order online", "curbside", "how does ordering"], "l": ["https://1wqofmv2qvyeu.preview.santestaging.com/products", "Start shopping"]}, {"g": "Pickup & info", "q": "Do you deliver or ship?", "a": "Right now online orders are for free in-store pickup. For delivery or shipping questions, give us a call at (555) 010-2200.", "ids": [], "kw": ["deliver", "delivery", "ship", "shipping", "doordash", "mail"], "l": null}, {"g": "Pickup & info", "q": "What are your hours?", "a": "Our hours aren't posted online yet. Call (555) 010-2200 and we'll let you know.", "ids": [], "kw": ["hours", "open", "close", "closing", "opening", "today", "sunday", "saturday"], "l": null}, {"g": "Pickup & info", "q": "Where are you located?", "a": "100 Main Street, Springfield, NY 12345. Phone: (555) 010-2200.", "ids": [], "kw": ["where", "address", "location", "located", "directions", "parking"], "l": ["https://www.google.com/maps/search/?api=1&query=100+Main+Street+Springfield+NY+12345", "Get directions"]}, {"g": "Pickup & info", "q": "Any tastings or events?", "a": "Nothing is scheduled at the moment. Keep an eye on our events page, or sign up for the Friday shelf note for new arrivals and staff picks.", "ids": [], "kw": ["event", "events", "tasting", "tastings", "class"], "l": ["https://1wqofmv2qvyeu.preview.santestaging.com/events", "See events"]}, {"g": "Pickup & info", "q": "Can you special-order a bottle?", "a": "Give us a call at (555) 010-2200 and tell us what you're looking for. We'll see what we can get.", "ids": [], "kw": ["special order", "special-order", "order a bottle", "don't see", "can you get", "find me"], "l": null}, {"g": "Pickup & info", "q": "Do I need ID?", "a": "Yes. You must be 21+ and show a valid ID when you pick up your order.", "ids": [], "kw": ["id", "age", "21", "license", "identification"], "l": null}], "pr": [{"id": "p1", "n": "Petal & Stone Rosé 750ml", "p": 15.99, "c": "Wine", "s": "petal-stone-rose-750-ml-4sywjmv2rkni0", "t": ["pink", "rose", "rosé", "wine"]}, {"id": "p2", "n": "Bella Fiore Prosecco 750ml", "p": 15.99, "c": "Wine", "s": "bella-fiore-prosecco-750-ml-4sywjmv2rko5u", "t": ["bubbly", "prosecco", "sparkling", "wine"]}, {"id": "p3", "n": "Kendall Ridge Cabernet 750ml", "p": 19.99, "c": "Wine", "s": "kendall-ridge-cabernet-750-ml-4sywjmv2rkngb", "t": ["cab", "cabernet", "red", "wine"]}, {"id": "p4", "n": "Maison Clair Champagne 750ml", "p": 49.99, "c": "Wine", "s": "maison-clair-champagne-750-ml-4sywjmv2rko66", "t": ["bubbly", "champagne", "sparkling", "wine"]}, {"id": "p5", "n": "Silver Pine Vodka 1.75L", "p": 27.99, "c": "Spirits", "s": "silver-pine-vodka-1-75-l-4sywjmv2rkopk", "t": ["liquor", "spirits", "vodka"]}, {"id": "p6", "n": "Agave Sol Reposado Tequila 750ml", "p": 39.99, "c": "Spirits", "s": "agave-sol-reposado-tequila-750-ml-4sywjmv2rkopd", "t": ["liquor", "spirits", "tequila"]}, {"id": "p7", "n": "Red Mesa Malbec 750ml", "p": 13.99, "c": "Wine", "s": "red-mesa-malbec-750-ml-4sywjmv2rkni2", "t": ["malbec", "red", "wine"]}, {"id": "p8", "n": "Granite Hill Chardonnay 750ml", "p": 17.99, "c": "Wine", "s": "granite-hill-chardonnay-750-ml-4sywjmv2rknhg", "t": ["chardonnay", "white", "wine"]}, {"id": "p9", "n": "Twin Oaks Sauvignon Blanc 750ml", "p": 12.99, "c": "Wine", "s": "twin-oaks-sauvignon-blanc-750-ml-4sywjmv2rknh8", "t": ["sauvignon", "sauvignon blanc", "white", "wine"]}, {"id": "p10", "n": "Bluff Point Rosé 750ml", "p": 9.99, "c": "Wine", "s": "bluff-point-rose-750-ml-4sywjmv2rknh6", "t": ["pink", "rose", "rosé", "wine"]}, {"id": "p11", "n": "Marlow Bay Sauvignon Blanc 750ml", "p": 16.99, "c": "Wine", "s": "marlow-bay-sauvignon-blanc-750-ml-4sywjmv2rknhj", "t": ["sauvignon", "sauvignon blanc", "white", "wine"]}, {"id": "p12", "n": "Copper Fox Bourbon 750ml", "p": 34.99, "c": "Spirits", "s": "copper-fox-bourbon-750-ml-4sywjmv2rko68", "t": ["bourbon", "liquor", "spirits", "whiskey", "whisky"]}, {"id": "p13", "n": "Silver Coast Pinot Grigio 750ml", "p": 12.99, "c": "Wine", "s": "silver-coast-pinot-grigio-750-ml-4sywjmv2rko5y", "t": ["pinot grigio", "white", "wine"]}, {"id": "p14", "n": "Kendall Ridge Cabernet 1.5L", "p": 32.99, "c": "Wine", "s": "kendall-ridge-cabernet-1-5-l-4sywjmv2rko5w", "t": ["cab", "cabernet", "red", "wine"]}, {"id": "p15", "n": "Lakeview Riesling 750ml", "p": 14.99, "c": "Wine", "s": "lakeview-riesling-750-ml-4sywjmv2rko60", "t": ["riesling", "white", "wine"]}, {"id": "p16", "n": "Old Vine Zinfandel 750ml", "p": 19.99, "c": "Wine", "s": "old-vine-zinfandel-750-ml-4sywjmv2rko62", "t": ["red", "wine", "zin", "zinfandel"]}, {"id": "p17", "n": "Old Mill Rye 750ml", "p": 54.99, "c": "Spirits", "s": "old-mill-rye-750-ml-4sywjmv2rkopq", "t": ["liquor", "rye", "spirits", "whiskey", "whisky"]}, {"id": "p18", "n": "Island Breeze Spiced Rum 750ml", "p": 19.99, "c": "Spirits", "s": "island-breeze-spiced-rum-750-ml-4sywjmv2rkopf", "t": ["liquor", "rum", "spirits"]}, {"id": "p19", "n": "Stillwater Vodka 1L", "p": 22.99, "c": "Spirits", "s": "stillwater-vodka-1-l-4sywjmv2rkopb", "t": ["liquor", "spirits", "vodka"]}, {"id": "p20", "n": "Silver Pine Vodka 750ml", "p": 16.99, "c": "Spirits", "s": "silver-pine-vodka-750-ml-4sywjmv2rkop7", "t": ["liquor", "spirits", "vodka"]}, {"id": "p21", "n": "Stillwater Vodka 1L (promo price)", "p": 19.99, "c": "Spirits", "s": "stillwater-vodka-1-l-promo-4sywjmv2rkopm", "t": ["liquor", "spirits", "vodka"]}, {"id": "p22", "n": "Harbor Light IPA 6pk 12oz", "p": 11.99, "c": "Beer", "s": "harbor-light-ipa-6-pk-12-oz-4sywjmv2rkpa3", "t": ["beer", "craft", "ipa", "light"]}, {"id": "p23", "n": "Brick Mill Stout 4pk 16oz", "p": 13.99, "c": "Beer", "s": "brick-mill-stout-4-pk-16-oz-4sywjmv2rkpad", "t": ["beer", "craft", "stout"]}, {"id": "p24", "n": "Copper Fox Bourbon 50ml", "p": 2.49, "c": "Spirits", "s": "copper-fox-bourbon-50-ml-4sywjmv2rkpab", "t": ["bourbon", "liquor", "spirits", "whiskey", "whisky"]}, {"id": "p25", "n": "Wine Gift Bag", "p": 2.99, "c": "Gifts & Extras", "s": "wine-gift-bag-4sywjmv2rkpqh", "t": ["extras", "gift", "mixer"]}, {"id": "p26", "n": "Golden Field Wheat 6pk 12oz", "p": 10.99, "c": "Beer", "s": "golden-field-wheat-6-pk-12-oz-4sywjmv2rkpah", "t": ["beer", "craft", "wheat"]}, {"id": "p27", "n": "Harbor Light Lager 12oz can", "p": 2.29, "c": "Beer", "s": "harbor-light-lager-12-oz-can-4sywjmv2rkpa1", "t": ["beer", "lager", "light"]}, {"id": "p28", "n": "Hana Nigori Sake 300ml", "p": 11.99, "c": "Sake", "s": "hana-nigori-sake-300-ml-4sywjmv2rkpqv", "t": ["sake"]}, {"id": "p29", "n": "Glen Tarra 12yr Scotch 750ml", "p": 59.99, "c": "Spirits", "s": "glen-tarra-12-yr-scotch-750-ml-4sywjmv2rkpaf", "t": ["liquor", "scotch", "spirits", "whiskey", "whisky"]}, {"id": "p30", "n": "Tonic Water 1L", "p": 2.99, "c": "Gifts & Extras", "s": "tonic-water-1-l-4sywjmv2rkpq9", "t": ["extras", "gift", "mixer", "tonic"]}, {"id": "p31", "n": "Bag of Ice 10lb", "p": 3.99, "c": "Ice", "s": "bag-of-ice-10-lb-4sywjmv2rkpqb", "t": ["ice"]}, {"id": "p32", "n": "Lime (each)", "p": 0.5, "c": "Gifts & Extras", "s": "lime-each-4sywjmv2rkpqf", "t": ["extras", "gift", "lime", "limes", "mixer"]}, {"id": "p33", "n": "Cedar Lane Pinot Noir 750ml", "p": 21.99, "c": "Wine", "s": "cedar-lane-pinot-noir-750-ml-4sywjmv2rknha", "t": ["pinot noir", "red", "wine"]}, {"id": "p34", "n": "Blue Gate Sauvignon Blanc 750ml", "p": 14.99, "c": "Wine", "s": "blue-gate-sauvignon-blanc-750-ml-4sywjmv2rknhc", "t": ["sauvignon", "sauvignon blanc", "white", "wine"]}, {"id": "p35", "n": "Old Quarry Bourbon 750ml", "p": 24.99, "c": "Spirits", "s": "old-quarry-bourbon-750-ml-4sywjmv2rkopi", "t": ["bourbon", "liquor", "spirits", "whiskey", "whisky"]}, {"id": "p36", "n": "Vista Alta Merlot 750ml", "p": 11.99, "c": "Wine", "s": "vista-alta-merlot-750-ml-4sywjmv2rko64", "t": ["merlot", "red", "wine"]}, {"id": "p37", "n": "Old Mill Bourbon 750ml", "p": 29.99, "c": "Spirits", "s": "old-mill-bourbon-750-ml-4sywjmv2rko6d", "t": ["bourbon", "liquor", "spirits", "whiskey", "whisky"]}, {"id": "p38", "n": "North Harbor Gin 750ml", "p": 29.99, "c": "Spirits", "s": "north-harbor-gin-750-ml-4sywjmv2rkop5", "t": ["gin", "liquor", "spirits"]}, {"id": "p39", "n": "Agave Sol Blanco Tequila 750ml", "p": 34.99, "c": "Spirits", "s": "agave-sol-blanco-tequila-750-ml-4sywjmv2rkopo", "t": ["liquor", "spirits", "tequila"]}, {"id": "p40", "n": "Lime Coast Hard Seltzer 12pk 12oz", "p": 19.99, "c": "Ready to Drink", "s": "lime-coast-hard-seltzer-12-pk-12-oz-4sywjmv2rkpaj", "t": ["canned", "cocktail", "lime", "limes", "ready to drink", "rtd", "seltzer"]}, {"id": "p41", "n": "Harbor Light Lager 30pk 12oz", "p": 24.99, "c": "Beer", "s": "harbor-light-lager-30-pk-12-oz-4sywjmv2rkpa7", "t": ["beer", "lager", "light"]}, {"id": "p42", "n": "Northshore IPA 6pk 12oz", "p": 12.99, "c": "Beer", "s": "northshore-ipa-6-pk-12-oz-4sywjmv2rkpa5", "t": ["beer", "craft", "ipa"]}, {"id": "p43", "n": "Ridgeline Light 30pk 12oz", "p": 22.99, "c": "Beer", "s": "ridgeline-light-30-pk-12-oz-4sywjmv2rkpa9", "t": ["beer", "light"]}, {"id": "p44", "n": "Corkscrew Waiter's Friend", "p": 8.99, "c": "Gifts & Extras", "s": "corkscrew-waiters-friend-4sywjmv2rkpqd", "t": ["corkscrew", "extras", "gift", "mixer", "opener"]}, {"id": "p45", "n": "Yuki Junmai Sake 720ml", "p": 24.99, "c": "Sake", "s": "yuki-junmai-sake-720-ml-4sywjmv2rkpql", "t": ["sake"]}, {"id": "p46", "n": "Paloma Bay Canned Cocktail 4pk 355ml", "p": 14.99, "c": "Ready to Drink", "s": "paloma-bay-canned-cocktail-4-pk-355-ml-4sywjmv2rkpqj", "t": ["canned", "cocktail", "ready to drink", "rtd", "seltzer"]}, {"id": "p47", "n": "Copper Fox Bourbon Smash Can 355ml", "p": 4.99, "c": "Ready to Drink", "s": "copper-fox-bourbon-smash-can-355-ml-4sywjmv2rkpqn", "t": ["bourbon", "canned", "cocktail", "ready to drink", "rtd", "seltzer", "whiskey", "whisky"]}], "base": "https://1wqofmv2qvyeu.preview.santestaging.com", "ai": "https://claude.ai/artifact/53AbQHiSWFQt1bakoGZqrA", "groups": ["Recommendations", "Pairings & occasions", "Pickup & info"]};
+const $=s=>document.querySelector(s), log=$('#log');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PR=Object.fromEntries(D.pr.map(p=>[p.id,p]));
+$('#live').href=D.ai; $('#shoplink').href=D.base+'/products';
+const card=p=>`<a class="card" href="${D.base}/product/${p.s}" target="_blank" rel="noopener"><span class="cat">${esc(p.c)}</span><span class="nm">${esc(p.n)}</span><span class="row"><b>$${p.p.toFixed(2)}</b><span>Shop →</span></span></a>`;
+function botHTML(text,ids,link){
+  const ps=ids.map(i=>PR[i]).filter(Boolean);
+  return `<p>${esc(text)}</p>${link?`<a class="more" href="${link[0]}" target="_blank" rel="noopener">${esc(link[1])} →</a>`:''}${ps.length?`<div class="cards${ps.length==4?' n4':''}">${ps.map(card).join('')}</div>`:''}`;
+}
+function addMe(t){const d=document.createElement('div');d.className='me';d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight}
+function addBot(html,delay){
+  const d=document.createElement('div');d.className='bot';d.innerHTML=`<span class="av">M&amp;M</span><div class="bub"><span class="typing"><span></span><span></span><span></span></span></div>`;
+  log.appendChild(d);log.scrollTop=log.scrollHeight;
+  setTimeout(()=>{d.querySelector('.bub').innerHTML=html;log.scrollTop=log.scrollHeight},delay);
+}
+
+// ---------- matching ----------
+const norm=s=>' '+s.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9$&'. ]+/g,' ').replace(/\s+/g,' ').trim()+' ';
+const has=(q,k)=>q.includes(' '+k+' ')||q.includes(' '+k+'s ')||(k.length>4&&q.includes(k));
+const TYPES=['red','white','rose','rosé','sparkling','wine','bourbon','whiskey','whisky','scotch','rye','vodka','tequila','gin','rum','spirits','liquor','beer','ipa','lager','stout','wheat','seltzer','sake','champagne','prosecco','cabernet','merlot','malbec','zinfandel','pinot noir','chardonnay','sauvignon blanc','pinot grigio','riesling','mixer','tonic','ice','corkscrew','light','craft'];
+function answer(raw){
+  const q=norm(raw);
+  if(/\b(i'?m|i am|im)\s*(1[0-9]|20)\b|\bunder 21\b|\bnot 21\b|\bminor\b/.test(q))
+    return {t:"Sorry, you need to be 21 or older to buy from us. Thanks for understanding!",ids:[]};
+  if(/^\s*(hi|hey|hello|yo|hiya|good (morning|afternoon|evening))\b/.test(q.trim())&&q.trim().split(' ').length<=3)
+    return {t:"Hey there! Ask me about a bottle, a pairing, prices or how pickup works. Or tap one of the popular questions.",ids:[]};
+  if(/\b(thanks|thank you|thx|ty)\b/.test(q)) return {t:"Anytime! Cheers, and see you at the counter.",ids:[]};
+  const price=(q.match(/(?:under|below|less than|cheaper than|max|up to|around|about)\s*\$?\s*(\d+)/)||q.match(/\$\s*(\d+)/)||[])[1];
+  const types=TYPES.filter(k=>has(q,k));
+  // 1) product name match ("do you have copper fox")
+  const words=q.trim().split(' ').filter(w=>w.length>3&&!['have','carry','sell','what','your','with','good','best','wine','beer','some','that','this','there','under','bottle','about','something','recommend'].includes(w));
+  let named=D.pr.map(p=>{const n=norm(p.n);return [p,words.filter(w=>n.includes(' '+w)).length]}).filter(x=>x[1]>=1);
+  const brandHits=named.filter(([p,s])=>s>=1&&!types.some(t=>norm(p.n).includes(' '+t+' ')&&s==1));
+  // 2) QA match
+  let best=null,bs=0;
+  D.qa.forEach(a=>{let s=0;a.kw.forEach(k=>{if(has(q,k))s+=k.includes(' ')?3:2});norm(a.q).split(' ').forEach(w=>{if(w.length>4&&q.includes(' '+w+' '))s+=1});if(s>bs){bs=s;best=a}});
+  // price / type browsing beats generic QA
+  if(price||(types.length&&bs<3&&(!brandHits.length||types.some(t=>t.includes(' '))))){
+    let list=D.pr.filter(p=>!types.length||types.some(t=>p.t.includes(t)||norm(p.n).includes(' '+t)));
+    if(price) list=list.filter(p=>p.p<=+price);
+    list.sort((a,b)=>a.p-b.p);
+    const label=types.length?types.join(' / '):'everything';
+    if(list.length){
+      const pick=list.length>4?[list[0],list[Math.floor(list.length/3)],list[Math.floor(2*list.length/3)],list[list.length-1]]:list;
+      const uniq=[...new Map(pick.map(p=>[p.id,p])).values()];
+      return {t:`${price?`Here's ${label} at $${price} or less`:`Here's the ${label} we carry online`}${list.length>uniq.length?`, a few picks from ${list.length} options`:''}. Sorted by price:`,ids:uniq.map(p=>p.id),l:[D.base+'/products','See everything']};
+    }
+    if(price&&types.length) return {t:`We don't have ${label} at $${price} or less online right now. Want to stretch the budget a little? Ask me again with a higher number.`,ids:[]};
+  }
+  if(best&&bs>=2) return {t:best.a,ids:best.ids,l:best.l};
+  if(brandHits.length){
+    const top=brandHits.sort((a,b)=>b[1]-a[1]).slice(0,4).map(x=>x[0]);
+    return {t:top.length==1?`Yes, we carry ${top[0].n} for $${top[0].p.toFixed(2)}, ready for in-store pickup.`:`Yes, here's what we have:`,ids:top.map(p=>p.id)};
+  }
+  if(best&&bs>=1) return {t:best.a,ids:best.ids,l:best.l};
+  return {t:"I'm not sure about that one. Try asking about a type of drink, a price (\"red under $15\"), a food pairing or pickup. For anything else, call us at (555) 010-2200.",ids:[],l:[D.base+'/products?search='+encodeURIComponent(raw.slice(0,60)),'Search the shop for it']};
+}
+function ask(text){
+  text=text.trim();if(!text)return;addMe(text);
+  const r=answer(text);addBot(botHTML(r.t,r.ids||[],r.l),450+Math.min(700,r.t.length*4));
+}
+
+// ---------- UI ----------
+let gi=1;
+function renderTabs(){
+  $('#tabs').innerHTML=D.groups.map((g,i)=>`<button type="button" class="tab" role="tab" aria-selected="${i==gi}" data-i="${i}">${esc(g)}</button>`).join('');
+  $('#chips').innerHTML=D.qa.filter(a=>a.g==D.groups[gi]).map(a=>`<button type="button" class="chip">${esc(a.q)}</button>`).join('');
+}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('.tab');if(b){gi=+b.dataset.i;renderTabs()}});
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b)ask(b.textContent)});
+$('#f').addEventListener('submit',e=>{e.preventDefault();const v=$('#q').value;$('#q').value='';ask(v)});
+renderTabs();
+addBot(botHTML("Hi! I'm the Maple & Main shop helper. Ask me for a bottle, a pairing, prices or pickup info, or tap a question.",[]),0);
+</script>
+</body>
+</html>
